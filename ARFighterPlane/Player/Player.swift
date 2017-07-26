@@ -16,6 +16,15 @@ import SceneKit
 
 // -----------------------------------------------------------------------------
 
+enum TouchGuesture {
+    static var moveLeft = "moveLeft"
+    static var moveRight = "moveRight"
+    static var moveUP = "moveUP"
+    static var moveDown = "moveDown"
+    static var moveDefault = "moveDefault"
+    static var moveFront = "moveFront"
+    static var moveBack = "moveBack"
+}
 class Player : SCNNode {
     private let lookAtForwardPosition = SCNVector3Make(0.0, -1.0, 6.0)
     private let cameraFowardPosition = SCNVector3(x: 5, y: 1.0, z: -5)
@@ -31,11 +40,11 @@ class Player : SCNNode {
     private func toggleCamera() {
         var position = _cameraNode!.position
 
-        if position.x < 0 {
-            position.x = 5.0
+        if position.z < 0 {
+            position.z = 5.0
         }
         else {
-            position.x = -5.0
+            position.z = -5.0
         }
     
         SCNTransaction.begin()
@@ -50,13 +59,13 @@ class Player : SCNNode {
     // MARK: - Plane movements
     
     func moveLeft() {
-        let moveAction = SCNAction.moveBy(x: 2.0, y: 0.0, z: 0.0, duration: 0.5)
-        self.runAction(moveAction, forKey: "moveLeftRight")
+        let moveAction = SCNAction.moveBy(x: -2.0, y: 0.0, z: 0.0, duration: 0.5)
+        self.runAction(moveAction, forKey: TouchGuesture.moveLeft)
         
-        let rotateAction1 = SCNAction.rotateBy(x: 0, y: 0, z: -degreesToRadians(value: 15.0), duration: 0.25)
-        let rotateAction2 = SCNAction.rotateBy(x: 0, y: 0, z: degreesToRadians(value: 15.0), duration: 0.25)
+       /* let rotateAction1 = SCNAction.rotateBy(x: 0, y: 0, z: 0, duration: 0.25)
+        let rotateAction2 = SCNAction.rotateBy(x: 0, y: 0, z: 0, duration: 0.25)
 
-        _playerNode!.runAction(SCNAction.sequence([rotateAction1, rotateAction2]))
+        _playerNode!.runAction(SCNAction.sequence([rotateAction1, rotateAction2])!) */
         
        // toggleCamera()
     }
@@ -64,18 +73,46 @@ class Player : SCNNode {
     // -------------------------------------------------------------------------
     
     func moveRight() {
-        let moveAction = SCNAction.moveBy(x: -2.0, y:0.0, z: 0.0, duration: 0.5)
-        self.runAction(moveAction, forKey: "moveLeftRight")
-        
-        let rotateAction1 = SCNAction.rotateBy(x: 0, y: 0, z: degreesToRadians(value: 15.0), duration: 0.25)
-        let rotateAction2 = SCNAction.rotateBy(x: 0, y: 0, z: -degreesToRadians(value: 15.0), duration: 0.25)
-
-        
-        _playerNode!.runAction(SCNAction.sequence([rotateAction1, rotateAction2]))
+        let moveAction = SCNAction.moveBy(x: 2.0, y: 0.0, z: 0.0, duration: 0.5)
+        self.runAction(moveAction, forKey: TouchGuesture.moveRight)
  
        // toggleCamera()
     }
     
+    func moveUP() {
+        let moveAction = SCNAction.moveBy(x: 0, y: -2.0, z: 0.0, duration: 0.5)
+        self.runAction(moveAction, forKey: TouchGuesture.moveUP)
+        
+        // toggleCamera()
+    }
+    
+    func moveDown() {
+        let moveAction = SCNAction.moveBy(x: 0, y: 2.0, z: 0.0, duration: 0.5)
+        self.runAction(moveAction, forKey: TouchGuesture.moveDown)
+        
+        // toggleCamera()
+    }
+    
+    func moveDefault() {
+        let moveAction = SCNAction.moveBy(x: 0, y: 0.0, z: 0.0, duration: 0.5)
+        self.runAction(moveAction, forKey: TouchGuesture.moveDefault)
+        
+        // toggleCamera()
+    }
+    
+    func moveFront() {
+        let moveAction = SCNAction.moveBy(x: 0, y: 0.0, z: -1.0, duration: 0.5)
+        self.runAction(moveAction, forKey: TouchGuesture.moveFront)
+        
+        // toggleCamera()
+    }
+    
+    func moveBack() {
+        let moveAction = SCNAction.moveBy(x: 0, y: 0.0, z: 1.0, duration: 0.5)
+        self.runAction(moveAction, forKey: TouchGuesture.moveBack)
+        
+        // toggleCamera()
+    }
     // -------------------------------------------------------------------------
     // MARK: - Initialisation
     
@@ -94,11 +131,13 @@ class Player : SCNNode {
         }
         
         _playerNode!.scale = SCNVector3(x: 0.25, y: 0.25, z: 0.25)
+        _playerNode!.rotation = SCNVector4Make(0, 1, 0,Float( Double.pi));
         self.addChildNode(_playerNode!)
         
         // Look at Node
         _lookAtNode = SCNNode()
         _lookAtNode!.position = lookAtForwardPosition
+        
         addChildNode(_lookAtNode!)
         
         // Camera Node
@@ -107,12 +146,13 @@ class Player : SCNNode {
         _cameraNode!.position = cameraFowardPosition
         _cameraNode!.camera!.zNear = 0.1
         _cameraNode!.camera!.zFar = 50
-        self.addChildNode(_cameraNode!)
+        _cameraNode!.camera!.usesOrthographicProjection = true 
+        self.addChildNode(_cameraNode!) 
         
         // Link them
         let constraint1 = SCNLookAtConstraint(target: _lookAtNode)
         constraint1.isGimbalLockEnabled = true
-        _cameraNode!.constraints = [constraint1]
+       // _cameraNode!.constraints = [constraint1]
         
         // Create a spotlight at the player
         let spotLight = SCNLight()

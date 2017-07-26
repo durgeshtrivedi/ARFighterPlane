@@ -32,12 +32,36 @@ class Level: SCNScene, SCNSceneRendererDelegate, SCNPhysicsContactDelegate {
         player!.moveLeft()
     }
 
-    // -------------------------------------------------------------------------
+    // Right Swipe
 
     func swipeRight() {
         player!.moveRight()
     }
+
+    // Swipe UP
+    func swipeUP() {
+        player!.moveUP()
+    }
     
+    // Swipe Down
+    func swipeDown() {
+        player!.moveDown()
+    }
+
+    // Keep in center
+    func swipeDefault() {
+        player!.moveDefault()
+    }
+    
+    // MOve Front
+    func moveFront() {
+        player!.moveFront()
+    }
+    
+    //Move Back
+    func moveBack() {
+        player!.moveBack()
+    }
     // -------------------------------------------------------------------------
     // MARK: - Place objects
     
